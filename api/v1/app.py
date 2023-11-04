@@ -6,11 +6,13 @@ from .views import app_views
 from . import models
 from os import getenv
 from flask_cors import CORS
+from flasgger.utils import swag_from
+from flasgger import Swagger
 
 
 app = Flask(__name__)
 
-CORS(app, resources=r"/*", origins=["0.0.0.0"])
+cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 app.register_blueprint(app_views)
 
@@ -27,6 +29,14 @@ def error(e):
     error = str(e).split()[0]
     output = e.description if "Not found" in e.description else "Not found"
     return jsonify({"error": output}), error
+
+
+app.config['SWAGGER'] = {
+    'title': 'AirBnB clone Restful API',
+    'uiversion': 3
+}
+
+Swagger(app)
 
 
 if __name__ == "__main__":
